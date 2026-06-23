@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: studybot
+    runtime: python
+    pythonVersion: "3.11.8"
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.8"
+      - key: TELEGRAM_TOKEN
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: ADMIN_USER_ID
+        sync: false
+      - key: PORT
+        value: "8080"
+      - key: DATA_DIR
+        value: /data
+    disk:
+      name: studybot-data
+      mountPath: /data
+      sizeGB: 1
