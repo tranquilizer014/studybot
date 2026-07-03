@@ -33,7 +33,7 @@ async def translate_question_and_options(question: str, options: list) -> tuple:
                   f"If already English, return as-is.\n"
                   f"Return ONLY JSON: {{\"question\": \"...\", \"options\": [...]}}\n\n"
                   f"Question: {question}\nOptions: {json.dumps(options)}")
-        r = await _call("llama-3.3-70b-versatile", [{"role":"user","content":prompt}], 500)
+        r = await _call("qwen/qwen3-27b", [{"role":"user","content":prompt}], 500)
         data = _parse_json(r.choices[0].message.content)
         return data.get("question", question), data.get("options", options)
     except Exception:
@@ -69,7 +69,7 @@ async def get_answer_groq_only(question: str, options: list) -> dict:
     prompt = (f"SSC/UPSC expert. Question: {question}\nOptions:\n{opts}\n"
               f"Return ONLY JSON: {{\"confidence\":0.0,\"correct_option\":0,\"explanation\":\"6-10 word explanation\"}}\n"
               f"correct_option is 0-indexed. Explanation MUST be 6-10 words.")
-    r = await _call("llama-3.3-70b-versatile", [{"role":"user","content":prompt}], 200)
+    r = await _call("qwen/qwen3-27b", [{"role":"user","content":prompt}], 200)
     return _parse_json(r.choices[0].message.content)
 
 async def get_answer_with_context(question: str, options: list, search_results: str) -> dict:
@@ -78,7 +78,7 @@ async def get_answer_with_context(question: str, options: list, search_results: 
               f"Question: {question}\nOptions:\n{opts}\n"
               f"Return ONLY JSON: {{\"correct_option\":0,\"explanation\":\"6-10 word explanation\"}}\n"
               f"correct_option is 0-indexed. Explanation MUST be 6-10 words.")
-    r = await _call("llama-3.3-70b-versatile", [{"role":"user","content":prompt}], 200)
+    r = await _call("qwen/qwen3-27b", [{"role":"user","content":prompt}], 200)
     return _parse_json(r.choices[0].message.content)
 
 async def get_explanation_for_answer(question: str, options: list, correct_idx: int) -> str:
@@ -89,7 +89,7 @@ async def get_explanation_for_answer(question: str, options: list, correct_idx: 
               f"Write a factual explanation in exactly 6-10 words why this is correct.\n"
               f"Return ONLY the explanation text, nothing else.")
     try:
-        r = await _call("llama-3.3-70b-versatile", [{"role":"user","content":prompt}], 100)
+        r = await _call("qwen/qwen3-27b", [{"role":"user","content":prompt}], 100)
         return r.choices[0].message.content.strip()
     except Exception:
         logger.error("Explanation generation failed", exc_info=True)
